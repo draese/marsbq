@@ -38,8 +38,13 @@ gulp.task('images', function() {
 });
 
 gulp.task('templates', function() {
-    return gulp.src(['src/templates/**/*.hbs'])
-      .pipe(handleBars())
+    var data    = {};                        // data for handleBars
+    var options = {                          // options for handleBars
+      batch: ['src/templates/partials']
+    };
+
+    return gulp.src(['src/templates/**/*.hbs', '!src/templates/partials/**/*.hbs'])
+      .pipe(handleBars( data, options ))
       .pipe(rename(function(path) {
         path.extname = '.html';
       }))

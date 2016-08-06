@@ -1,11 +1,13 @@
 // Gulp automated task execution file
 
-var gulp        = require('gulp');                   // gulp itself
-var browserSync = require('browser-sync').create();  // sync changes to browser
-var minifyCSS   = require('gulp-minify-css');        // minify CSS
-var uglify      = require('gulp-uglify');            // minify JavaScript
-var imageMin    = require('gulp-imagemin');          // render down image size
-var sourceMaps  = require('gulp-sourcemaps');        // map for debugging
+var gulp        = require('gulp');                    // gulp itself
+var browserSync = require('browser-sync').create();   // sync changes to browser
+var minifyCSS   = require('gulp-minify-css');         // minify CSS
+var uglify      = require('gulp-uglify');             // minify JavaScript
+var imageMin    = require('gulp-imagemin');           // render down image size
+var sourceMaps  = require('gulp-sourcemaps');         // map for debugging
+var handleBars  = require('gulp-compile-handlebars'); // HTML templating
+var rename      = require('gulp-rename');             // renaming files
 
 // minify the java scripts
 gulp.task( 'scripts', function() {
@@ -35,8 +37,17 @@ gulp.task('images', function() {
       .pipe(browserSync.stream());
 });
 
+gulp.task('templates', function() {
+    return gulp.src(['src/templates/**/*.hbs'])
+      .pipe(handleBars())
+      .pipe(rename(function(path) {
+        path.extname = '.html';
+      }))
+      .pipe(gulp.dest('./'));
+});
+
 // start browser-sync
-gulp.task('default', function(){
+gulp.task('default', ['templates', 'styles', 'scripts', 'images'], function(){
     console.log('Start execution of default task');
 
     browserSync.init({
@@ -44,6 +55,7 @@ gulp.task('default', function(){
     });
 
     // detect all changes on sources and trigger browser reload
+    gulp.watch( 'src/templates/**/*.hbs', ['templates'] );
     gulp.watch( 'src/styles/**/*.css', ['styles'] );
     gulp.watch( 'src/scripts/**/*.js', ['scripts'] );
     gulp.watch( 'src/img/**/*', ['images'] );

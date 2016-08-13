@@ -9,6 +9,8 @@ var sourceMaps  = require('gulp-sourcemaps');         // map for debugging
 var handleBars  = require('gulp-compile-handlebars'); // HTML templating
 var rename      = require('gulp-rename');             // renaming files
 
+var menuContent = require('./menu.json');             // JSON content of menu
+
 // minify the java scripts
 gulp.task( 'scripts', function() {
     gulp.src(['src/scripts/**/*.js'])
@@ -38,7 +40,11 @@ gulp.task('images', function() {
 });
 
 gulp.task('templates', function() {
-    var data    = {};                        // data for handleBars
+    var data    = {
+        year: new Date().getFullYear(),
+        menuData: menuContent.menuItems
+    };
+                    // data for handleBars
     var options = {                          // options for handleBars
       batch: ['src/templates/partials']
     };

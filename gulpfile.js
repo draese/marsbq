@@ -8,6 +8,7 @@ var imageMin    = require('gulp-imagemin');           // render down image size
 var sourceMaps  = require('gulp-sourcemaps');         // map for debugging
 var handleBars  = require('gulp-compile-handlebars'); // HTML templating
 var rename      = require('gulp-rename');             // renaming files
+var less        = require('gulp-less');               // for CSS preprocessing
 
 var menuContent = require('./menu.json');             // JSON content of menu
 
@@ -23,8 +24,9 @@ gulp.task( 'scripts', function() {
 
 // minify the CSS
 gulp.task('styles', function() {
-    gulp.src(['src/styles/**/*.css'])
+    gulp.src(['src/styles/main.less'])
       .pipe(sourceMaps.init())
+      .pipe(less())
       .pipe(minifyCSS())
       .pipe(sourceMaps.write())
       .pipe(gulp.dest('dist/styles'))
@@ -67,7 +69,7 @@ gulp.task('default', ['templates', 'styles', 'scripts', 'images'], function(){
 
     // detect all changes on sources and trigger browser reload
     gulp.watch( 'src/templates/**/*.hbs', ['templates'] );
-    gulp.watch( 'src/styles/**/*.css', ['styles'] );
+    gulp.watch( 'src/styles/**/*.less', ['styles'] );
     gulp.watch( 'src/scripts/**/*.js', ['scripts'] );
     gulp.watch( 'src/img/**/*', ['images'] );
     gulp.watch( '*.html', browserSync.reload );
